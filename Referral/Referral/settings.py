@@ -1,4 +1,6 @@
 from pathlib import Path
+# from Referral.main.secret import *
+from .secret import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -65,11 +67,11 @@ WSGI_APPLICATION = 'Referral.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'referral_system',           # Имя базы данных
-        'USER': 'postgres',         # Имя пользователя
-        'PASSWORD': '8886547', # Пароль пользователя
-        'HOST': 'localhost',      # Хост базы данных (обычно localhost)
-        'PORT': '',               # Порт базы данных (по умолчанию)
+        'NAME': 'referral_system',
+        'USER': 'postgres',
+        'PASSWORD': postgreSQLpassword,
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 
@@ -116,3 +118,8 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'main.User'
+
+
+TWILIO_ACCOUNT_SID = ACCOUNT_SID
+TWILIO_AUTH_TOKEN = AUTH_TOKEN
+TWILIO_PHONE_NUMBER = PHONE_NUMBER

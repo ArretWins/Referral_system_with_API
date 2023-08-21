@@ -16,7 +16,7 @@ class User(AbstractUser):
 
     objects = UserManager()
 
-    def full_name(self):  # Измените имя метода, чтобы избежать конфликта с полем "name"
+    def full_name(self):
         return self.name + ' ' + self.phone_number
 
     def __str__(self):
