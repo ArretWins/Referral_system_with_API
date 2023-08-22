@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone Authorization</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #1E2A38;
+        }
+        .form-container {
+            background-color: #2B3945;
+        }
+        .form-label {
+            color: #D3DCE6;
+        }
+        .form-input {
+            border-color: #4A90E2;
+            color: #000;
+        }
+        .form-btn {
+            background-color: #4A90E2;
+            color: #FFFFFF;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center h-screen">
+    <div class="max-w-sm w-full p-6 form-container rounded shadow-md">
+        <h1 class="text-2xl font-semibold mb-4 text-white">Phone Authorization</h1>
+        <form action="{% url 'phone-authorization' %}" method="post" class="space-y-4">
+            {% csrf_token %}
+            <div>
+                <label for="phone" class="block form-label">Phone Number</label>
+                <input type="text" id="phone" name="phone_number" class="w-full border rounded px-3 py-2 mt-1 form-input text-black">
+            </div>
+            <button type="submit" class="w-full form-btn py-2 rounded">Send OTP</button>
+        </form>
+    </div>
+</body>
+</html>
