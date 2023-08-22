@@ -4,6 +4,7 @@ import string
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render
 from rest_framework import generics, status, viewsets
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from twilio.rest import Client
@@ -18,6 +19,7 @@ verify_sid = "VA7f6ae1a5cc074e5fcbb49f40cbd7d553"
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class PhoneAuthorizationView(APIView):
