@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main',
     'rest_framework',
+    'rest_framework.authtoken'
 ]
 
 MIDDLEWARE = [
@@ -124,3 +125,10 @@ AUTH_USER_MODEL = 'main.User'
 TWILIO_ACCOUNT_SID = ACCOUNT_SID
 TWILIO_AUTH_TOKEN = AUTH_TOKEN
 TWILIO_PHONE_NUMBER = PHONE_NUMBER
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+}

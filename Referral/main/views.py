@@ -4,6 +4,8 @@ import string
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render
 from rest_framework import generics, status, viewsets
+from rest_framework.authtoken.models import Token
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -20,6 +22,36 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
+
+
+class UserProfileViewSet(viewsets.ModelViewSet):
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        phone_number = self.request.user
+        return User.objects.filter(phone_number=phone_number)
+
+
+    @action(detail=False, methods=['post'])
+    def activate_invite_code(self, request):
+        user = self.request.user
+        invite_code = request.data.get('invite_code')
+
+        # Check if the user has already activated an invite code
+        if user.invite_code_activated:
+            return Response({'detail': 'User has already activated an invite code.'}, status=400)
+
+        try:
+            invite_user = User.objects.get(invite_code=invite_code)
+        except User.DoesNotExist:
+            return Response({'detail': 'Invalid invite code.'}, status=400)
+
+        # Activate the invite code for the current user
+        user.invite_code_activated = True
+        user.save()
+
+        return Response({'detail': 'Invite code activated successfully.'}, status=200)
 
 
 class PhoneAuthorizationView(APIView):
@@ -78,7 +110,13 @@ class PhoneLoginView(APIView):
             try:
                 user = User.objects.get(phone_number=phone_number)
                 login(request, user)
-                return Response({'message': 'User logged in successfully.'}, status=status.HTTP_200_OK)
+                token, created = Token.objects.get_or_create(user=request.user)
+                data = {
+                    'token': token.key,
+                    'user_id': request.user.pk,
+                    'phone_number': request.user.phone_number
+                }
+                return Response({'message': 'User logged in successfully.', "data": data}, status=status.HTTP_200_OK)
             except User.DoesNotExist:
                 return Response({'message': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
         else:
