@@ -124,6 +124,10 @@ class PhoneLoginView(APIView):
 
 
 class LogoutView(APIView):
+    def get(self, request):
+        return render(request, 'main/logout.html')
+
+
     def post(self, request):
         if request.user.is_authenticated:
             try:
