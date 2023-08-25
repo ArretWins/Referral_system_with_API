@@ -10,6 +10,7 @@ class User(AbstractUser):
     # otp = models.CharField(max_length=4, null=True, blank=True)
     invite_code = models.CharField(max_length=6, null=True, blank=True)
     # is_verified = models.BooleanField(default=False)
+    invite_code_activated = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = ['name']

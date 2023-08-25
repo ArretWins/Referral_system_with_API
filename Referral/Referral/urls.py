@@ -16,8 +16,9 @@ urlpatterns = [
     path('send-otp/', PhoneAuthorizationView.as_view(), name='send-otp'),
     path('login/', PhoneLoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
-    # path('profile/', UserProfileViewSet.as_view(), name='profile'),
+    path('profile/', UserProfileViewSet.as_view({'post': 'activate_invite_code'}), name='profile'),
     path('', include(router.urls)),  # Включаем роутер URL-путей
     path('api/', include(router.urls)),
+    # path('activate-invite-code/', UserProfileViewSet.as_view({'post': 'activate_invite_code'}), name='activate_invite_code'),
 ]
 
