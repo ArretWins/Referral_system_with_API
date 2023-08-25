@@ -1,7 +1,7 @@
 import random
 import string
 
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render
 from rest_framework import generics, status, viewsets
 from rest_framework.authtoken.models import Token
@@ -121,3 +121,18 @@ class PhoneLoginView(APIView):
                 return Response({'message': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
         else:
             return Response({'message': 'Invalid phone number or OTP.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+class LogoutView(APIView):
+    def post(self, request):
+        if request.user.is_authenticated:
+            try:
+                token = Token.objects.get(user=request.user)
+                token.delete()
+            except Token.DoesNotExist:
+                pass
+
+            logout(request)
+            return Response({"success": "Successfully logged out."}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "You are not logged in."}, status=status.HTTP_401_UNAUTHORIZED)
