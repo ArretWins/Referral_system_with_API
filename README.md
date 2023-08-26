@@ -21,6 +21,7 @@ In this project, user authentication via phone numbers has been implemented. Dur
 
 
 Users can input an invite code within their profile. Upon entering the code, a check is performed to validate its existence in the database. If the code exists and the user hasn't activated an invite code before, the code gets activated.
+
 ![Screenshot](screenshots/activate.png)
 
 
