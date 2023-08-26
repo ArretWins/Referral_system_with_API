@@ -14,14 +14,14 @@ In this project, user authentication via phone numbers has been implemented. Dur
 ![Screenshot](screenshots/send-OTP.png)
 ![Screenshot](screenshots/send-OTP-conf.png)
 ![Screenshot](screenshots/OTP.png)
-
+![Screenshot](screenshots/login.png)
+![Screenshot](screenshots/login-conf.png)
 
 ### Invite Code Entry and Activation
 
 
 Users can input an invite code within their profile. Upon entering the code, a check is performed to validate its existence in the database. If the code exists and the user hasn't activated an invite code before, the code gets activated.
-![Screenshot](screenshots/login.png)
-![Screenshot](screenshots/login-conf.png)
+![Screenshot](screenshots/activate.png)
 
 
 
@@ -32,12 +32,15 @@ The profile API provides the ability to retrieve a list of users (phone numbers)
 
 ![Screenshot](screenshots/profile.png)
 
+
 ### Working with POST Requests and Error Handling
 
 The project fully supports the functionality of necessary POST requests for authorization and invite code activation. Additionally, various error scenarios have been carefully addressed to ensure a more reliable and informative user interaction.
 
-![Screenshot](screenshots/activate.png)
+
 ![Screenshot](screenshots/mistakes.png)
+![Screenshot](screenshots/postman.png)
+![Screenshot](screenshots/auth-mistakes.png)
 
 
 ### Using PostgreSQL
