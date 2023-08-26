@@ -1,8 +1,6 @@
 from twilio.rest import Client
-from Referral.settings import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER
+from Referral.settings import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER, VERIFY_SID
 import random
-
-verify_sid = "VA7f6ae1a5cc074e5fcbb49f40cbd7d553"
 
 
 def generate_otp():
@@ -12,7 +10,7 @@ def generate_otp():
 def send_otp_sms(phone_number, otp):
     client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
-    message = client.verify.v2.services(verify_sid) \
+    message = client.verify.v2.services(VERIFY_SID) \
         .verifications \
         .create(to=phone_number, channel="sms")
 
