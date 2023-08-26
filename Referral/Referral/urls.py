@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from main.views import PhoneAuthorizationView, PhoneLoginView, UserViewSet, UserProfileViewSet, LogoutView
+from main.views import *
 
 
 router = DefaultRouter()
@@ -17,6 +17,6 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name='logout'),
     path('profile/', UserProfileViewSet.as_view({'post': 'activate_invite_code'}), name='profile'),
     path('', include(router.urls)),
-    path('api/', include(router.urls)),
+    path('delete-profile/', DeleteProfileView, name='delete-profile'),
 ]
 
