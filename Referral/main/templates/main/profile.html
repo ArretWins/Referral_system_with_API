@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activate Invite Code</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+    body {
+        background-color: #1E2A38;
+    }
+    .form-container {
+        background-color: #2B3945;
+    }
+    .form-label {
+        color: #D3DCE6;
+    }
+    .form-input {
+        border-color: #4A90E2;
+        color: #000;
+    }
+    .form-btn {
+        background-color: #4A90E2;
+        color: #FFFFFF;
+    }
+    </style>
+</head>
+<body class="text-white">
+    <div class="container mx-auto py-8">
+        <h1 class="text-2xl font-semibold mb-4">Profile</h1>
+        <p class="mb-4">Phone Number: {{ user.phone_number }}</p>
+        <p class="mb-4">Your own invite code: {{ user.invite_code }}</p>
+        <form action="{% url 'profile' %}" method="post">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label for="invite_code" class="block">Enter Invite Code:</label>
+                <input type="text" name="invite_code" class="w-full px-4 py-2 border rounded text-black">
+            </div>
+            <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">Activate</button>
+        </form><br>
+        <p class="mb-4">Users who activate your invite code:</p>
+        {%for outher_user in object_list%}
+            {%if outher_user.outher_invite_code == user.invite_code%}
+                <p class="mb-4">{{ outher_user.phone_number }}</p>
+            {%endif%}
+        {% endfor %}
+    </div>
+</body>
+</html>
