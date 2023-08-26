@@ -3,7 +3,8 @@ import string
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, status, viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action
@@ -48,7 +49,6 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         user = self.request.user
         invite_code = request.data.get('invite_code')
 
-        # Check if the user has already activated an invite code
         if user.invite_code_activated:
             return Response({'detail': 'User has already activated an invite code.'}, status=400)
 
@@ -60,7 +60,6 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         except User.DoesNotExist:
             return Response({'detail': 'Invalid invite code.'}, status=400)
 
-        # Activate the invite code for the current user
         user.invite_code_activated = True
         user.outher_invite_code = invite_code
         user.save()
@@ -78,10 +77,6 @@ class PhoneAuthorizationView(APIView):
         if not phone_number:
             return Response({'message': 'Phone number is required.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Generate 4-digit OTP
-        # otp = ''.join(random.choices(string.digits, k=4))
-
-        # Send OTP
         client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
         message = client.verify.services(VERIFY_SID) \
             .verifications \
@@ -89,14 +84,11 @@ class PhoneAuthorizationView(APIView):
 
         try:
             user = User.objects.get(phone_number=phone_number)
-            # Если пользователь уже авторизован, то не меняем инвайт-код
             if not user:
-                # Generate random invite code
                 invite_code = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
                 user.invite_code = invite_code
                 user.save()
         except User.DoesNotExist:
-            # Generate random invite code for a new user
             invite_code = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
             user = User.objects.create(phone_number=phone_number, invite_code=invite_code)
 
@@ -156,12 +148,13 @@ class LogoutView(APIView):
             return Response({"error": "You are not logged in."}, status=status.HTTP_401_UNAUTHORIZED)
 
 
+@csrf_exempt
 @login_required
 def DeleteProfileView(request):
     if request.method == 'POST':
         user = request.user
         user.delete()
-        logout(request)  # Разлогиниваем пользователя
-        return redirect('custom-login')  # Перенаправляем на страницу входа
+        logout(request)
+        return redirect('login')
 
     return render(request, 'main/delete_profile.html')
