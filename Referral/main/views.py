@@ -25,12 +25,23 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class UserProfileViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_all_queryset(self):
+        return super().get_queryset()
+
 
     def get_queryset(self):
         phone_number = self.request.user
         return User.objects.filter(phone_number=phone_number)
+
+    def get(self, request):
+        users = self.get_all_queryset()
+        return render(request, 'main/profile.html', {'object_list': users, 'current_user': request.user})
+
+
 
 
     @action(detail=False, methods=['post'])
@@ -42,6 +53,9 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         if user.invite_code_activated:
             return Response({'detail': 'User has already activated an invite code.'}, status=400)
 
+        if not invite_code:
+            return Response({'detail': 'Invite code is required.'}, status=400)
+
         try:
             invite_user = User.objects.get(invite_code=invite_code)
         except User.DoesNotExist:
@@ -49,6 +63,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
         # Activate the invite code for the current user
         user.invite_code_activated = True
+        user.outher_invite_code = invite_code
         user.save()
 
         return Response({'detail': 'Invite code activated successfully.'}, status=200)
