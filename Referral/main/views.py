@@ -2,6 +2,7 @@ import random
 import string
 
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from rest_framework import generics, status, viewsets
 from rest_framework.authtoken.models import Token
@@ -13,10 +14,8 @@ from twilio.rest import Client
 
 
 from .models import User
-from Referral.settings import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN
+from Referral.settings import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, VERIFY_SID
 from .serializers import UserSerializer
-
-verify_sid = "VA7f6ae1a5cc074e5fcbb49f40cbd7d553"
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
@@ -84,7 +83,7 @@ class PhoneAuthorizationView(APIView):
 
         # Send OTP
         client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-        message = client.verify.services(verify_sid) \
+        message = client.verify.services(VERIFY_SID) \
             .verifications \
             .create(to=phone_number, channel="sms")
 
@@ -117,7 +116,7 @@ class PhoneLoginView(APIView):
             return Response({'message': 'Phone number and OTP are required.'}, status=status.HTTP_400_BAD_REQUEST)
 
         client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-        verification = client.verify.services(verify_sid) \
+        verification = client.verify.services(VERIFY_SID) \
             .verification_checks \
             .create(to=phone_number, code=otp)
 
@@ -155,3 +154,14 @@ class LogoutView(APIView):
             return Response({"success": "Successfully logged out."}, status=status.HTTP_200_OK)
         else:
             return Response({"error": "You are not logged in."}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+@login_required
+def DeleteProfileView(request):
+    if request.method == 'POST':
+        user = request.user
+        user.delete()
+        logout(request)  # Разлогиниваем пользователя
+        return redirect('custom-login')  # Перенаправляем на страницу входа
+
+    return render(request, 'main/delete_profile.html')
